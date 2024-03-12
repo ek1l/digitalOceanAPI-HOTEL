@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Hotel {
+  id            Int          @id @default(autoincrement())
+  name          String       @db.VarChar(255)
+  description   Description  @relation(fields: [descriptionId], references: [id], onDelete: Cascade)
+  descriptionId Int
+  facilities    Facilities[]
+  city          Cities       @relation(fields: [cityId], references: [id])
+  cityId        Int
+  condition     Conditions[]
+  travelTime    TravelTime[]
+  sport         Sports[]
+  images        Images[]
+  rating        Ratings      @relation(fields: [ratingId], references: [id])
+  ratingId      Int
+}
+
+model Images {
+  id      Int    @id @default(autoincrement())
+  path    String
+  hotel   Hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  hotelId Int
+}
+
+model Ratings {
+  id     Int     @id @default(autoincrement())
+  rating String
+  hotel  Hotel[]
+}
+
+model Conditions {
+  id        Int     @id @default(autoincrement())
+  condition String  @unique
+  hotel     Hotel[]
+}
+
+model TravelTime {
+  id         Int     @id @default(autoincrement())
+  travelTime String  @unique
+  hotel      Hotel[]
+}
+
+model Sports {
+  id    Int     @id @default(autoincrement())
+  sport String  @unique
+  hotel Hotel[]
+}
+
+model Facilities {
+  id       Int     @id @default(autoincrement())
+  facility String
+  icon     String
+  hotel    Hotel[]
+}
+
+model Country {
+  id     Int      @id @default(autoincrement())
+  name   String
+  cities Cities[]
+}
+
+model Cities {
+  id        Int     @id @default(autoincrement())
+  name      String
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId Int
+  hotel     Hotel[]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
+  email    String @unique @db.VarChar(255)
+  role     String @default("user") @db.VarChar(255)
+}
+
+model Description {
+  id            Int     @id @default(autoincrement())
+  comment       Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId     Int
+  destination   String
+  accommodation String
+  activities    String
+  hotel         Hotel[]
+}
+
+model Comment {
+  id          Int           @id @default(autoincrement())
+  author      String
+  photo       String
+  comment     String
+  description Description[]
+}
+
+model Galery {
+  id   Int    @id @default(autoincrement())
+  path String
+}
+
+model PhotosSliders {
+  id   Int    @id @default(autoincrement())
+  path String
+}
+
+model Team {
+  id    Int    @id @default(autoincrement())
+  name  String
+  photo String
+  role  String
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  author      String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  content     String
+  banner      String
+}
